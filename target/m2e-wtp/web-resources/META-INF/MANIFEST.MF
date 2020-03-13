@@ -4,7 +4,8 @@ Implementation-Version: 0.0.1-SNAPSHOT
 Built-By: Admin
 Implementation-Vendor-Id: com.pdfconversion
 Build-Jdk: 1.8.0_192
-Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
- ot-starter-parent/pdfconversiontox
+Implementation-URL: http://projects.spring.io/spring-boot/pdfconversio
+ ntox/
 Created-By: Maven Integration for Eclipse
+Implementation-Vendor: Pivotal Software, Inc.
 
