@@ -15,4 +15,9 @@ public class ConversionController {
 	public String map1() {
 		return "Map-1";
 	}
+	
+	@RequestMapping("/pdf/to/html")
+	public String pdfToHtml() {
+		return "PDF To HTML Conversion!";
+	}
 }
