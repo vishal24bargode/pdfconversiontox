@@ -15,13 +15,9 @@ public class ConversionController {
 	
 	@RequestMapping("/")
 	public String index() {
-		return "Conversion Service Ready for Use! Jenkin Deployment Testing 4";
+		return "Conversion Service Ready for Use!";
 	}
-	
-	@RequestMapping("/map1")
-	public String map1() {
-		return "Map-1";
-	}
+
 	
 	@RequestMapping("/pdf/to/html")
 	public String pdfToHtml(@RequestParam String pdfPath) {
