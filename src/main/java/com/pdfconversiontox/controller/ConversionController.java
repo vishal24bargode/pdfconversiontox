@@ -5,13 +5,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pdfconversiontox.service.ConversionService;
+import com.pdfconversiontox.service.PDFConversionService;
 
 @RestController
 public class ConversionController {
 	
 	@Autowired
-	ConversionService conversionService;
+	PDFConversionService conversionService;
 	
 	@RequestMapping("/")
 	public String index() {

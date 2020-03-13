@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.pdfconversiontox.util.Pdf2HtmlUtil;
 
 @Service
-public class ConversionService {
+public class PDFConversionService {
 	
 	Pdf2HtmlUtil pdftohtmlUtil = new Pdf2HtmlUtil();
 	
@@ -22,9 +22,12 @@ public class ConversionService {
 			if(success) {
 				status="success";
 			}
-		} catch (ParserConfigurationException | IOException e) {
+		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 		}
 		
 		return status;		
