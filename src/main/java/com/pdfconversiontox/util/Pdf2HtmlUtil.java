@@ -6,6 +6,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -19,6 +25,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
+import com.pdfconversiontox.dto.HtmlFile;
 
 @Repository
 public class Pdf2HtmlUtil {
@@ -36,7 +43,7 @@ public class Pdf2HtmlUtil {
 		}
 		
 		
-		String htmlOutputDir = "src/main/resources/templates/pdffromhtml";
+		String htmlOutputDir = "src/main/resources/static/html/";
 		
 		if(!env.getProperty("app.pdfconversiontox.html.output.dir").isEmpty())
 		{
@@ -56,6 +63,7 @@ public class Pdf2HtmlUtil {
 		parser.writeText(pdf, output);
 	
 		output.close();
+		
 		return true;		
 	}
 
@@ -65,6 +73,28 @@ public class Pdf2HtmlUtil {
 		document.open();
 		XMLWorkerHelper.getInstance().parseXHtml(writer, document, new FileInputStream(filename));
 		document.close();
+	}
+	
+	public Set<HtmlFile> listFilesUsingDirectoryStream() throws IOException {
+		String htmlOutputDir = "src/main/resources/static/html/";
+		
+		if(!env.getProperty("app.pdfconversiontox.html.output.dir").isEmpty())
+		{
+			htmlOutputDir = env.getProperty("app.pdfconversiontox.html.output.dir");
+		}
+		
+	    Set<HtmlFile> fileList = new HashSet<HtmlFile>();
+	    try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(htmlOutputDir))) {
+	        for (Path path : stream) {
+	            if (!Files.isDirectory(path)) {
+	            	HtmlFile htmlFile = new HtmlFile();
+	            	htmlFile.setFileName(path.getFileName().toString());
+	            	htmlFile.setFileHref("html/"+path.getFileName().toString());
+	            	fileList.add(htmlFile);
+	            }
+	        }
+	    }
+	    return fileList;
 	}
 }
 

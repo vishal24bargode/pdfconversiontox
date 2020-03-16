@@ -1,14 +1,20 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<style>
+.content {
+  max-width: 500px;
+  margin: auto;
+}
+</style>
 <body>
-
+<div class="content">
 <h1>Hayagreeva Consulting Pvt. Ltd.</h1>
 <h2>PDF to HTML Conversion Demo</h2>
 
-<form method="POST" action="/upload" enctype="multipart/form-data">
+<form method="POST" th:action="@{/upload}" enctype="multipart/form-data">
     <input type="file" name="file" /><br/><br/>
     <input type="submit" value="Convert To HTML" />
 </form>
-
+</div>
 </body>
 </html>

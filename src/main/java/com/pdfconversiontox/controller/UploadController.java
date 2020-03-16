@@ -2,6 +2,7 @@ package com.pdfconversiontox.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -65,7 +66,8 @@ public class UploadController {
     }
 
     @GetMapping("/uploadStatus")
-    public String uploadStatus() {
+    public String uploadStatus(Model model) {
+    	model.addAttribute("htmlFiles", conversionService.listFiles());
         return "uploadStatus";
     }
 
