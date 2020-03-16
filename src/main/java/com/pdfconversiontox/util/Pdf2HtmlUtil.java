@@ -82,7 +82,7 @@ public class Pdf2HtmlUtil {
 		{
 			htmlOutputDir = env.getProperty("app.pdfconversiontox.html.output.dir");
 		}
-		
+		System.out.println("[Pdf2HtmlUtil][listFilesUsingDirectoryStream][htmlOutputDir]="+htmlOutputDir);
 	    Set<HtmlFile> fileList = new HashSet<HtmlFile>();
 	    try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(htmlOutputDir))) {
 	        for (Path path : stream) {
@@ -90,6 +90,7 @@ public class Pdf2HtmlUtil {
 	            	HtmlFile htmlFile = new HtmlFile();
 	            	htmlFile.setFileName(path.getFileName().toString());
 	            	htmlFile.setFileHref("html/"+path.getFileName().toString());
+	            	System.out.println("[Pdf2HtmlUtil][listFilesUsingDirectoryStream][htmlFile]="+htmlFile.getFileName());
 	            	fileList.add(htmlFile);
 	            }
 	        }
