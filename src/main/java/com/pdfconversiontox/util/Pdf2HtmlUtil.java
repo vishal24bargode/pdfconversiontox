@@ -89,7 +89,7 @@ public class Pdf2HtmlUtil {
 	    ClassLoader loader = Thread.currentThread().getContextClassLoader();
 	    URL url = loader.getResource(htmlOutputDir);
 	    String path = url.getPath();
-	    
+	    System.out.println("[Pdf2HtmlUtil][listFilesUsingDirectoryStream][path]="+path);
 	    for(File file : new File(path).listFiles()) {
 	    	HtmlFile htmlFile = new HtmlFile();
         	htmlFile.setFileName(file.getName());
