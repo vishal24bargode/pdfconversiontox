@@ -1,2 +1,5 @@
+com\pdfconversiontox\dto\ServiceStatus.class
+com\pdfconversiontox\Application.class
 com\pdfconversiontox\controller\ConversionController.class
-com\app\Application.class
+com\pdfconversiontox\util\Pdf2HtmlUtil.class
+com\pdfconversiontox\service\PDFConversionService.class

@@ -11,29 +11,30 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.fit.pdfdom.PDFDomTree;
+import org.springframework.stereotype.Repository;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
 
+@Repository
 public class Pdf2HtmlUtil {
 
 	public Boolean generateHTMLFromPDF(String pdfPath) throws ParserConfigurationException, IOException {
 		String pdfPathSplit[] = pdfPath.split("/");
 		String htmlFileName = pdfPathSplit[pdfPathSplit.length-1];
+		if(htmlFileName.contains(".pdf")) {
+			htmlFileName = htmlFileName.replace(".pdf", "");
+		}
+		
 		PDDocument pdf = PDDocument.load(new File(pdfPath));
 		PDFDomTree parser = new PDFDomTree();
 		Writer output = new PrintWriter("src/main/resources/output/"+htmlFileName+".html", "utf-8");
 		parser.writeText(pdf, output);
-		
+	
 		output.close();
-		if (pdf != null) {			
-			pdf.close();
-			return true;
-		}
-		
-		return false;
+		return true;		
 	}
 
 	public void generatePDFFromHTML(String filename) throws ParserConfigurationException, IOException, DocumentException {

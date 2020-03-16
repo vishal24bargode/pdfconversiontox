@@ -4,33 +4,40 @@ import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pdfconversiontox.dto.ServiceStatus;
 import com.pdfconversiontox.util.Pdf2HtmlUtil;
 
 @Service
 public class PDFConversionService {
 	
-	Pdf2HtmlUtil pdftohtmlUtil = new Pdf2HtmlUtil();
+	@Autowired
+	Pdf2HtmlUtil pdftohtmlUtil;
 	
-	public String convertPdfToHtml(String pdfPath) {
+	public ServiceStatus convertPdfToHtml(String pdfPath) {
 		
-		String status = "failed";
+		ServiceStatus serviceStatus = new ServiceStatus();
 		
 		try {
 			Boolean success = pdftohtmlUtil.generateHTMLFromPDF(pdfPath);
 			if(success) {
-				status="success";
+				serviceStatus.setStatus("success");
+			}else {
+				serviceStatus.setStatus("failed");
 			}
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
+			serviceStatus.setErrorMessage(e.getMessage());
 			e.printStackTrace();
 		} catch (IOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+			serviceStatus.setErrorMessage(e.getMessage());
+			e.printStackTrace();
 		}
 		
-		return status;		
+		return serviceStatus;		
 	}
 
 }
