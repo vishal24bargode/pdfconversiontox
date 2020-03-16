@@ -36,7 +36,7 @@ public class Pdf2HtmlUtil {
 		}
 		
 		
-		String htmlOutputDir = "src/main/resources/output/";
+		String htmlOutputDir = "src/main/resources/html/";
 		
 		if(!env.getProperty("app.pdfconversiontox.html.output.dir").isEmpty())
 		{
