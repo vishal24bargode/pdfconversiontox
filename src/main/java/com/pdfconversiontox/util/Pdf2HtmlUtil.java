@@ -81,23 +81,22 @@ public class Pdf2HtmlUtil {
 		String htmlOutputDir = "src/main/resources/static/";
 		Set<HtmlFile> fileList = new HashSet<HtmlFile>();
 		if (!env.getProperty("app.pdfconversiontox.html.output.dir").isEmpty()) {
-			htmlOutputDir = env.getProperty("app.pdfconversiontox.html.output.dir");
-			
-			DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(htmlOutputDir));
-
-			for (Path path : stream) {
-				if (!Files.isDirectory(path)) {
-					HtmlFile htmlFile = new HtmlFile();
-					htmlFile.setFileName(path.getFileName().toString());
-					htmlFile.setFileHref(path.getFileName().toString());
-					System.out.println("[Pdf2HtmlUtil][htmlOutputDir][htmlFile]=" + htmlFile.getFileName());
-					fileList.add(htmlFile);
-				}
-			}
-
+			htmlOutputDir = env.getProperty("app.pdfconversiontox.html.output.dir");		
 		}
 		
-		System.out.println("[Pdf2HtmlUtil][listFilesUsingDirectoryStream][htmlOutputDir]=" + htmlOutputDir);
+
+		DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(htmlOutputDir));
+
+		for (Path path : stream) {
+			if (!Files.isDirectory(path)) {
+				HtmlFile htmlFile = new HtmlFile();
+				htmlFile.setFileName(path.getFileName().toString());
+				htmlFile.setFileHref(path.getFileName().toString());
+				fileList.add(htmlFile);
+			}
+		}
+		
+		/*System.out.println("[Pdf2HtmlUtil][listFilesUsingDirectoryStream][htmlOutputDir]=" + htmlOutputDir);
 		
 
 		DirectoryStream<Path> stream = Files.newDirectoryStream(htmlPath);
@@ -110,7 +109,7 @@ public class Pdf2HtmlUtil {
 				System.out.println("[Pdf2HtmlUtil][listFilesUsingDirectoryStream][htmlFile]=" + htmlFile.getFileName());
 				fileList.add(htmlFile);
 			}
-		}
+		}*/
 
 		return fileList;
 	}
