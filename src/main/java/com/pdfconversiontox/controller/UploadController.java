@@ -12,6 +12,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.pdfconversiontox.dto.ServiceStatus;
 import com.pdfconversiontox.service.PDFConversionService;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -71,7 +72,10 @@ public class UploadController {
     @GetMapping("/uploadStatus")
     public String uploadStatus(Model model) {
     	Path htmlPath = Paths.get(HTML_FOLDER);
-    	
+    	File[] fileList = htmlPath.toFile().listFiles();
+    	for(File f:fileList) {
+    		System.out.println("[uploadStatus][fileName]="+f.getAbsolutePath());
+    	}
     	model.addAttribute("htmlFiles", conversionService.listFiles(htmlPath));
         return "uploadStatus";
     }
