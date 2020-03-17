@@ -23,6 +23,9 @@ public class UploadController {
     //Save the uploaded file to this folder
     private static String UPLOADED_FOLDER = "src/main/resources/pdf/";
     
+  //Save the uploaded file to this folder
+    private static String HTML_FOLDER = "src/main/resources/html/";
+    
     @Autowired
 	PDFConversionService conversionService;
 
@@ -67,7 +70,9 @@ public class UploadController {
 
     @GetMapping("/uploadStatus")
     public String uploadStatus(Model model) {
-    	model.addAttribute("htmlFiles", conversionService.listFiles());
+    	Path htmlPath = Paths.get(HTML_FOLDER);
+    	
+    	model.addAttribute("htmlFiles", conversionService.listFiles(htmlPath));
         return "uploadStatus";
     }
 

@@ -77,7 +77,7 @@ public class Pdf2HtmlUtil {
 		document.close();
 	}
 	
-	public Set<HtmlFile> listFilesUsingDirectoryStream() throws IOException {
+	public Set<HtmlFile> listFilesUsingDirectoryStream(Path htmlPath) throws IOException {
 		String htmlOutputDir = "src/main/resources/static/";
 
 		if (!env.getProperty("app.pdfconversiontox.html.output.dir").isEmpty()) {
@@ -86,10 +86,8 @@ public class Pdf2HtmlUtil {
 		System.out.println("[Pdf2HtmlUtil][listFilesUsingDirectoryStream][htmlOutputDir]=" + htmlOutputDir);
 		Set<HtmlFile> fileList = new HashSet<HtmlFile>();
 
-		DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(htmlOutputDir));
-		
-		Path path1 = Paths.get(htmlOutputDir);
-		System.out.println("[Pdf2HtmlUtil][listFilesUsingDirectoryStream][path1]=" + path1.getFileName());
+		DirectoryStream<Path> stream = Files.newDirectoryStream(htmlPath);
+
 		for (Path path : stream) {
 			if (!Files.isDirectory(path)) {
 				HtmlFile htmlFile = new HtmlFile();

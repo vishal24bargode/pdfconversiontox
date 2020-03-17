@@ -1,6 +1,7 @@
 package com.pdfconversiontox.service;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,10 +44,10 @@ public class PDFConversionService {
 		return serviceStatus;		
 	}
 	
-	public Set<HtmlFile> listFiles(){
+	public Set<HtmlFile> listFiles(Path htmlPath){
 		Set<HtmlFile> fileList = new HashSet<HtmlFile>();
 		try {
-			fileList = pdftohtmlUtil.listFilesUsingDirectoryStream();
+			fileList = pdftohtmlUtil.listFilesUsingDirectoryStream(htmlPath);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
