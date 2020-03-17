@@ -57,11 +57,11 @@ public class Pdf2HtmlUtil {
 		
 		PDDocument pdf = PDDocument.load(new File(pdfPath));
 
-		PDFDomTree parser = new PDFDomTree();
-		
+		//PDFDomTree parser = new PDFDomTree();
+		CustomPDFDomTree customParser = new CustomPDFDomTree();
 		Writer output = new PrintWriter(htmlFileName , "utf-8");
 		
-		parser.writeText(pdf, output);
+		customParser.writeText(pdf, output);
 	
 		output.close();
 		pdf.close();
@@ -78,27 +78,27 @@ public class Pdf2HtmlUtil {
 	}
 	
 	public Set<HtmlFile> listFilesUsingDirectoryStream() throws IOException {
-		String htmlOutputDir = "src/main/resources/static/html/";
-		
-		if(!env.getProperty("app.pdfconversiontox.html.output.dir").isEmpty())
-		{
+		String htmlOutputDir = "src/main/resources/static/";
+
+		if (!env.getProperty("app.pdfconversiontox.html.output.dir").isEmpty()) {
 			htmlOutputDir = env.getProperty("app.pdfconversiontox.html.output.dir");
 		}
-		System.out.println("[Pdf2HtmlUtil][listFilesUsingDirectoryStream][htmlOutputDir]="+htmlOutputDir);
-	    Set<HtmlFile> fileList = new HashSet<HtmlFile>();
-	    
-	    try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(htmlOutputDir))) {
-	        for (Path path : stream) {
-	            if (!Files.isDirectory(path)) {
-	            	HtmlFile htmlFile = new HtmlFile();
-	            	htmlFile.setFileName(path.getFileName().toString());
-	            	htmlFile.setFileHref("html/"+path.getFileName().toString());
-	            	System.out.println("[Pdf2HtmlUtil][listFilesUsingDirectoryStream][htmlFile]="+htmlFile.getFileName());
-	            	fileList.add(htmlFile);
-	            }
-	        }
-	    }
-	    return fileList;
+		System.out.println("[Pdf2HtmlUtil][listFilesUsingDirectoryStream][htmlOutputDir]=" + htmlOutputDir);
+		Set<HtmlFile> fileList = new HashSet<HtmlFile>();
+
+		DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(htmlOutputDir));
+
+		for (Path path : stream) {
+			if (!Files.isDirectory(path)) {
+				HtmlFile htmlFile = new HtmlFile();
+				htmlFile.setFileName(path.getFileName().toString());
+				htmlFile.setFileHref(path.getFileName().toString());
+				System.out.println("[Pdf2HtmlUtil][listFilesUsingDirectoryStream][htmlFile]=" + htmlFile.getFileName());
+				fileList.add(htmlFile);
+			}
+		}
+
+		return fileList;
 	}
 }
 
