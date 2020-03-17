@@ -70,13 +70,7 @@ public class UploadController {
 
     @GetMapping("/uploadStatus")
     public String uploadStatus(Model model) {
-    	Path htmlPath = Paths.get(STATIC_FOLDER);
-    	
-    	System.out.println("[uploadStatus][htmlPath]="+htmlPath);
-
-    	int fileCount = htmlPath.toFile().listFiles().length;
-    	System.out.println("[uploadStatus][fileCount]="+fileCount);
-    	
+    	Path htmlPath = Paths.get(STATIC_FOLDER);  	
     	model.addAttribute("htmlFiles", conversionService.listFiles(htmlPath));
         return "uploadStatus";
     }
