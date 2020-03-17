@@ -87,7 +87,9 @@ public class Pdf2HtmlUtil {
 		Set<HtmlFile> fileList = new HashSet<HtmlFile>();
 
 		DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(htmlOutputDir));
-
+		
+		Path path1 = Paths.get(htmlOutputDir);
+		System.out.println("[Pdf2HtmlUtil][listFilesUsingDirectoryStream][path1]=" + path1.getFileName());
 		for (Path path : stream) {
 			if (!Files.isDirectory(path)) {
 				HtmlFile htmlFile = new HtmlFile();
