@@ -74,6 +74,9 @@ public class UploadController {
     	
     	System.out.println("[uploadStatus][htmlPath]="+htmlPath);
 
+    	int fileCount = htmlPath.toFile().listFiles().length;
+    	System.out.println("[uploadStatus][fileCount]="+fileCount);
+    	
     	model.addAttribute("htmlFiles", conversionService.listFiles(htmlPath));
         return "uploadStatus";
     }
