@@ -12,7 +12,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.pdfconversiontox.dto.ServiceStatus;
 import com.pdfconversiontox.service.PDFConversionService;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,7 +24,7 @@ public class UploadController {
     private static String UPLOADED_FOLDER = "src/main/resources/pdf/";
     
   //Save the uploaded file to this folder
-    private static String HTML_FOLDER = "src/main/resources/html/";
+    private static String STATIC_FOLDER = "src/main/resources/static/";
     
     @Autowired
 	PDFConversionService conversionService;
@@ -71,11 +70,10 @@ public class UploadController {
 
     @GetMapping("/uploadStatus")
     public String uploadStatus(Model model) {
-    	Path htmlPath = Paths.get(HTML_FOLDER);
-    	File[] fileList = htmlPath.toFile().listFiles();
-    	for(File f:fileList) {
-    		System.out.println("[uploadStatus][fileName]="+f.getAbsolutePath());
-    	}
+    	Path htmlPath = Paths.get(STATIC_FOLDER);
+    	
+    	System.out.println("[uploadStatus][htmlPath]="+htmlPath);
+
     	model.addAttribute("htmlFiles", conversionService.listFiles(htmlPath));
         return "uploadStatus";
     }
