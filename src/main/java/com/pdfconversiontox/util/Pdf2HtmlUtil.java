@@ -59,7 +59,7 @@ public class Pdf2HtmlUtil {
 
 		//PDFDomTree parser = new PDFDomTree();
 		CustomPDFDomTree customParser = new CustomPDFDomTree();
-		Writer output = new PrintWriter(htmlFileName , "utf-16");
+		Writer output = new PrintWriter(htmlFileName , "utf-8");
 		
 		customParser.writeText(pdf, output);
 	
