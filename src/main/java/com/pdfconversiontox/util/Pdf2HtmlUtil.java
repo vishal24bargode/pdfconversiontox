@@ -59,11 +59,12 @@ public class Pdf2HtmlUtil {
 
 		PDFDomTree parser = new PDFDomTree();
 		
-		Writer output = new PrintWriter(htmlFileName , "UTF-16");
+		Writer output = new PrintWriter(htmlFileName , "utf-8");
 		
 		parser.writeText(pdf, output);
 	
 		output.close();
+		pdf.close();
 		
 		return true;		
 	}
@@ -86,19 +87,7 @@ public class Pdf2HtmlUtil {
 		System.out.println("[Pdf2HtmlUtil][listFilesUsingDirectoryStream][htmlOutputDir]="+htmlOutputDir);
 	    Set<HtmlFile> fileList = new HashSet<HtmlFile>();
 	    
-	    ClassLoader loader = Thread.currentThread().getContextClassLoader();
-	    URL url = loader.getResource(htmlOutputDir);
-	    String path = url.getPath();
-	    System.out.println("[Pdf2HtmlUtil][listFilesUsingDirectoryStream][path]="+path);
-	    for(File file : new File(path).listFiles()) {
-	    	HtmlFile htmlFile = new HtmlFile();
-        	htmlFile.setFileName(file.getName());
-        	htmlFile.setFileHref("html/"+file.getName());
-        	System.out.println("[Pdf2HtmlUtil][listFilesUsingDirectoryStream][htmlFile]="+htmlFile.getFileName());
-        	fileList.add(htmlFile);
-	    }
-	    
-	   /* try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(htmlOutputDir))) {
+	    try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(htmlOutputDir))) {
 	        for (Path path : stream) {
 	            if (!Files.isDirectory(path)) {
 	            	HtmlFile htmlFile = new HtmlFile();
@@ -108,7 +97,7 @@ public class Pdf2HtmlUtil {
 	            	fileList.add(htmlFile);
 	            }
 	        }
-	    }*/
+	    }
 	    return fileList;
 	}
 }
