@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.net.URL;
-import java.nio.file.DirectoryStream;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,10 +16,15 @@ import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.fit.pdfdom.PDFDomTree;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Repository;
 
 import com.itextpdf.text.Document;
@@ -44,29 +49,79 @@ public class Pdf2HtmlUtil {
 		}
 		
 		
-		String htmlOutputDir = "src/main/resources/static/html/";
+		String htmlOutputDir = "src/main/resources/static/";
 		
 		if(!env.getProperty("app.pdfconversiontox.html.output.dir").isEmpty())
 		{
-			htmlOutputDir = env.getProperty("app.pdfconversiontox.html.output.dir");
+			htmlOutputDir = this.getApplicationPath() + env.getProperty("app.pdfconversiontox.html.output.dir");
 		}
 		
 		htmlFileName = htmlOutputDir+htmlFileName;
-		
-		System.out.println("[Pdf2HtmlUtil][generateHTMLFromPDF][htmlFileName]="+htmlFileName);
-		
+				
 		PDDocument pdf = PDDocument.load(new File(pdfPath));
-
 		//PDFDomTree parser = new PDFDomTree();
 		CustomPDFDomTree customParser = new CustomPDFDomTree();
-		Writer output = new PrintWriter(htmlFileName , "utf-8");
+		try {
+			File htmlFile = new File(htmlFileName);
+			Path htmlPath = Paths.get(htmlFile.toURI());
+			Writer output = new PrintWriter(new File(htmlPath.toFile().toURI()), "utf-8");
+			customParser.writeText(pdf, output);
+
+			output.close();
+			pdf.close();
+		}catch(Exception e){
+			System.out.println("Error:\n"+e.getMessage());
+			e.printStackTrace();
+		}
 		
-		customParser.writeText(pdf, output);
-	
-		output.close();
-		pdf.close();
+		this.modifyGeneratedHTML(htmlFileName);
 		
 		return true;		
+	}
+	
+	public void modifyGeneratedHTML(String htmlPath) {
+		
+		org.jsoup.nodes.Document doc;
+        try {
+        	doc = Jsoup.parse(new File(htmlPath),"utf-8");           
+            // get all div with class=p
+            Elements divElements = doc.select("div[class=p]");
+            int pcount = 0;
+            int breakingCount = 60;
+            for (Element dElement : divElements) {
+            	if(pcount < breakingCount) {
+            		if(dElement.attr("id").equalsIgnoreCase("p"+pcount)) {
+            			dElement.remove();
+            		}
+            		pcount++;
+            	}else {
+            		break;
+            	}
+            }
+            
+            // remove first 5 div with class=r
+            Elements divElementsWithR =  doc.select("div[class=r]");
+            pcount = 0;
+            breakingCount = 5;
+            for (Element dElement : divElementsWithR) {
+            	if(pcount < breakingCount) {
+            		dElement.remove();
+            		pcount++;
+            	}else {
+            			break;
+            	}
+            }
+         
+            // remove first img element
+            doc.select("img").first().attr("src", "rbi-header.jpg").attr("style", "width:595.44pt;overflow:hidden;");
+            
+            
+            final File f = new File(htmlPath);
+            FileUtils.writeStringToFile(f, doc.outerHtml(), "UTF-8");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		
 	}
 
 	public void generatePDFFromHTML(String filename) throws ParserConfigurationException, IOException, DocumentException {
@@ -81,37 +136,36 @@ public class Pdf2HtmlUtil {
 		String htmlOutputDir = "src/main/resources/static/";
 		Set<HtmlFile> fileList = new HashSet<HtmlFile>();
 		if (!env.getProperty("app.pdfconversiontox.html.output.dir").isEmpty()) {
-			htmlOutputDir = env.getProperty("app.pdfconversiontox.html.output.dir");		
+			htmlOutputDir = this.getApplicationPath() + env.getProperty("app.pdfconversiontox.html.output.dir");		
 		}
 		
 
-		DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(htmlOutputDir));
-
-		for (Path path : stream) {
-			if (!Files.isDirectory(path)) {
+		//Path filePath = Paths.get(new File(htmlPath).toURI()).toAbsolutePath().normalize();
+        Resource resource = new UrlResource(htmlPath.toUri());
+		
+		for (File file : resource.getFile().listFiles()) {
+			if (!file.isDirectory()) {
 				HtmlFile htmlFile = new HtmlFile();
-				htmlFile.setFileName(path.getFileName().toString());
-				htmlFile.setFileHref(path.getFileName().toString());
+				htmlFile.setFileName(file.getName());
+				htmlFile.setFileHref(env.getProperty("app.pdfconversiontox.html.output.dir")+file.getName());
 				fileList.add(htmlFile);
 			}
 		}
-		
-		/*System.out.println("[Pdf2HtmlUtil][listFilesUsingDirectoryStream][htmlOutputDir]=" + htmlOutputDir);
-		
-
-		DirectoryStream<Path> stream = Files.newDirectoryStream(htmlPath);
-
-		for (Path path : stream) {
-			if (!Files.isDirectory(path)) {
-				HtmlFile htmlFile = new HtmlFile();
-				htmlFile.setFileName(path.getFileName().toString());
-				htmlFile.setFileHref(path.getFileName().toString());
-				System.out.println("[Pdf2HtmlUtil][listFilesUsingDirectoryStream][htmlFile]=" + htmlFile.getFileName());
-				fileList.add(htmlFile);
-			}
-		}*/
-
 		return fileList;
+	}
+	
+	public String getApplicationPath() throws java.io.UnsupportedEncodingException {
+
+		String path = this.getClass().getClassLoader().getResource("").getPath();
+
+		String fullPath = URLDecoder.decode(path, "UTF-8");
+
+		String pathArr[] = fullPath.split("/WEB-INF/classes/");
+
+		fullPath = pathArr[0];
+
+		return fullPath;
+
 	}
 }
 

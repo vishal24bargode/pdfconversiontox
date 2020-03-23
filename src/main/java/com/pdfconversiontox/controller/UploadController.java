@@ -1,6 +1,7 @@
 package com.pdfconversiontox.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +13,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.pdfconversiontox.dto.ServiceStatus;
 import com.pdfconversiontox.service.PDFConversionService;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,14 +23,12 @@ import java.nio.file.Paths;
 @Controller
 public class UploadController {
 
-    //Save the uploaded file to this folder
-    private static String UPLOADED_FOLDER = "src/main/resources/pdf/";
-    
-  //Save the uploaded file to this folder
-    private static String STATIC_FOLDER = "src/main/resources/static/";
+	@Autowired
+	private Environment env;
     
     @Autowired
 	PDFConversionService conversionService;
+
 
     @GetMapping("/")
     public String index() {
@@ -47,8 +48,13 @@ public class UploadController {
 
             // Get the file and save it somewhere
             byte[] bytes = file.getBytes();
-            String pdfPath = UPLOADED_FOLDER + file.getOriginalFilename();
-            Path path = Paths.get(pdfPath);
+            String pdfUploadFolder = conversionService.getApplicationPath()+env.getProperty("app.pdfconversiontox.pdf.output.dir");
+            File directory = new File(pdfUploadFolder);
+            if (! directory.exists()){
+                directory.mkdir();
+            }
+            String pdfPath = pdfUploadFolder + file.getOriginalFilename();
+            Path path = Paths.get(new File(pdfPath).toURI());
             Files.write(path, bytes);
             
             ServiceStatus serviceStatus = conversionService.convertPdfToHtml(pdfPath);
@@ -70,10 +76,24 @@ public class UploadController {
 
     @GetMapping("/uploadStatus")
     public String uploadStatus(Model model) {
-    	Path htmlPath = Paths.get(STATIC_FOLDER);  	
-    	model.addAttribute("htmlFiles", conversionService.listFiles(htmlPath));
+    	String htmlUploadFolder;
+		try {
+			htmlUploadFolder = conversionService.getApplicationPath()+env.getProperty("app.pdfconversiontox.html.output.dir");
+		
+	        File directory = new File(htmlUploadFolder);
+	        if (! directory.exists()){
+	            directory.mkdir();
+	            directory.setWritable(true);
+	        }
+	    	Path htmlPath = Paths.get(new File(htmlUploadFolder).toURI());  	
+	    	model.addAttribute("htmlFiles", conversionService.listFiles(htmlPath));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         return "uploadStatus";
     }
+
 
 }
 

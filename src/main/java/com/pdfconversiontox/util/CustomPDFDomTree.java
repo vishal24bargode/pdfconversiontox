@@ -30,7 +30,7 @@ public class CustomPDFDomTree extends PDFBoxTree
     private static Logger log = LoggerFactory.getLogger(CustomPDFDomTree.class);
 
     /** Default style placed in the begining of the resulting document */
-    protected String defaultStyle = ".page{position:relative;margin:0.5em}\n" +
+    protected String defaultStyle = ".page{position:relative;margin:auto}\n" +
             ".p,.r{position:absolute;}\n" +
             // disable text-shadow fallback for text stroke if stroke supported by browser
             "@supports(-webkit-text-stroke: 1px black) {" +
